@@ -1,13 +1,6 @@
-import App from './App.vue'
 import router from './router'
-import store from './store'
-import mixins from './common/mixin'
-import {
-    sync
-} from 'vuex-router-sync';
+import App from './App.vue'
 
-sync(store, router);
-Vue.mixin(mixins)
-new Vue(Vue.util.extend({ el: '#root', router, store }, App))
+new Vue(Vue.util.extend({ el: '#root', router }, App))
 
 router.push('/')
