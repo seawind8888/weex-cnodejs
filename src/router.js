@@ -1,7 +1,15 @@
 import VueRouter from 'vue-router';
-import List from './views/cnode-list.vue'
+import ListView from './views/cnodeListView.vue'
 
 Vue.use(VueRouter);
+
+function createListView (type) {
+  return {
+    render (createElement) {
+      return createElement(ListView, { props: { type } })
+    }
+  }
+}
 
 export default new VueRouter({
     routes: [{
@@ -9,6 +17,15 @@ export default new VueRouter({
         redirect: '/latest'
     }, {
         path: '/latest',
-        component: List
+        component: createListView('all')
+    }, {
+        path: '/job',
+        component: createListView('job')
+    }, {
+        path: '/ask',
+        component: createListView('ask')
+    }, {
+        path: '/good',
+        component: createListView('good')
     }]
 });
