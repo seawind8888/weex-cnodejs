@@ -59,6 +59,7 @@
 </style>
 
 <script>
+import utils from '../common/utils.js';
 const stream = weex.requireModule('stream')
 export default {
   data() {

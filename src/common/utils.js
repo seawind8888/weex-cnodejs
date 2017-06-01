@@ -1,3 +1,14 @@
+import Timeago from 'timeago.js';
+
+exports.getLastTimeStr = (time, friendly) => {
+    if (friendly) {
+        return MillisecondToDate(time);
+    } else {
+        return fmtDate(new Date(time), 'yyyy-MM-dd hh:mm');
+    }
+};
+
+
 const fmtDate = (date, fmt) => { // author: meizz
     var o = {
         'M+': date.getMonth() + 1, // 月份
