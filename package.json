@@ -7,6 +7,9 @@
     "build": "webpack",
     "dev": "webpack --watch",
     "serve": "serve -p 1339",
+    "copy:android": "cp dist/app.weex.js platforms/android/app/src/main/assets/dist/app.weex.js",
+    "copy:ios": "cp dist/app.weex.js platforms/ios/assets/dist/app.weex.js",
+    "copy": "npm run copy:android && npm run copy:ios",
     "android": "weex run android",
     "ios": "weex run android"
   },
