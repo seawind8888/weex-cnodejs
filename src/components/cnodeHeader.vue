@@ -17,7 +17,7 @@
     right: 0; 
     padding-left: 20px;
     padding-right: 20px;
-    background-color: #444444;
+    background-color: #343434;
 }
 .hedaer-info {
     color: #ffffff;

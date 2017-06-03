@@ -1,5 +1,6 @@
 import Timeago from 'timeago.js';
 
+
 exports.getLastTimeStr = (time, friendly) => {
     if (friendly) {
         return MillisecondToDate(time);

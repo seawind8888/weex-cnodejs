@@ -1,12 +1,27 @@
 <template>
   <div class="wrapper">
-    <div class="push-list">
-      <div class="push-list-header">
-        <image class="list-logo" src="http://tz88.com.cn/imgs/logo.png"></image>
+    <div v-if="isSlide" class="slide-list-container">
+      <div class="slide-list-header">
+        <image class="slide-logo" src="http://tz88.com.cn/imgs/logo.png"></image>
+      </div>
+      <div class="slide-list-main">
+        <div class="slide-list-item">
+          <text class="slide-list-info">最新</text>
+        </div>
+        <div class="slide-list-item">
+          <text class="slide-list-info">招聘</text>
+        </div>
+        <div class="slide-list-item">
+          <text class="slide-list-info">问答</text>
+        </div>
+        <div class="slide-list-item">
+          <text class="slide-list-info">热门</text>
+        </div>
       </div>
     </div>
+    <div v-else  class="slide-list-container"></div>
     <div class="list-container" ref="containerDig">
-      <CnodeHeader @pushEmit="pushList()"  :titleInfo="'最新'"></CnodeHeader>
+      <CnodeHeader @pushEmit="pushList()" :titleInfo="'最新'"></CnodeHeader>
       <list class="list" @loadmore="fetchData" loadmoreoffset="50">
         <refresh @refresh="fetchData" :display="refreshing ? 'show' : 'hide'">
           <text class="refresh-info">正在加载 ...</text>
@@ -21,18 +36,20 @@
           </div>
         </cell>
       </list>
-      <div @click="pushBackList" v-if="isPush" class="push-back-block"></div>
+      <div @click="pushBackList" v-if="isSlide" class="slide-back-block"></div>
     </div>
   </div>
 </template>
 
 <style scoped>
-
 .list-container {
   display: flex;
+  border-color: #000000;
+  box-shadow: -2px 0 4px #888888;
   border-left-width: 1;
-  border-color: #000000
+  border-color: rgb(37, 37, 37);
 }
+
 .refresh-info {
   width: 750px;
   color: #dddddd;
@@ -45,6 +62,8 @@
 
 .list-single-cell {
   padding: 20;
+  display: flex;
+  justify-content: center;
   background-color: #fafafa;
   border-color: rgb(191, 191, 191);
   border-bottom-width: 1
@@ -59,6 +78,8 @@
 .cell-info-container {
   display: flex;
   flex-direction: row;
+  margin-top: 10;
+  font-size: 26;
 }
 
 .author-info {
@@ -76,7 +97,7 @@
 }
 
 
-.push-back-block {
+.slide-back-block {
   position: absolute;
   top: 0;
   left: 0;
@@ -84,29 +105,45 @@
   bottom: 0;
 }
 
-.push-list {
+.slide-list-container {
   position: absolute;
+  width: 500px;
+  left: 0;
+  top: 0;
+  bottom: 0;
+  box-shadow: 10
+}
+
+.slide-list-header {
+  height: 100px;
+  position: relative;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  top: 0;
   left: 0;
   right: 0;
-  top: 0;
-  bottom: 0
+  padding-left: 20px;
+  padding-right: 20px;
+  background-color: #343434;
 }
-.push-list-header {
-   height: 100px;
-    position: relative;
-    display: flex;
-    flex-direction: row;
-    align-items: center;
-    top: 0;
-    left: 0;
-    right: 0; 
-    padding-left: 20px;
-    padding-right: 20px;
-    background-color: #444444;
-}
-.list-logo {
+
+.slide-logo {
   width: 292;
   height: 90;
+}
+
+.slide-list-item {
+  height: 100px;
+  display: flex;
+  padding-left: 20;
+  border-bottom-width: 1;
+  border-color: #dddddd;
+  justify-content: center;
+}
+
+.slide-list-info {
+  font-size: 30px;
 }
 </style>
 
@@ -121,10 +158,11 @@ export default {
       urlParam: {
         page: 1,
         limit: 20,
-        tab: 'all',
+        type: 'all',
         render: true
       },
-      isPush: false,
+      isReady: false,
+      isSlide: false,
       refreshing: false,
       listInfo: ''
     }
@@ -133,8 +171,8 @@ export default {
     CnodeHeader
   },
   mounted() {
-    this.fetchData()
-    console.log(new Date())
+    // this.fetchData()
+    this.$store.dispatch('FETCH_LIST_DATA', this.urlParam)
   },
   filters: {
     getLastTimeStr(time, isFromNow) {
@@ -154,6 +192,7 @@ export default {
           self.refreshing = false
           if (response.status == 200) {
             resolve(response)
+            self.isReady = true
             self.listInfo = response.data.data
           }
           else {
@@ -165,25 +204,26 @@ export default {
     pushList() {
       var self = this
       var pushEl = self.$refs.containerDig
+      self.isSlide = true
       animation.transition(pushEl, {
-          styles: {
-            transform: 'translateX(500px)'
-          },
-          duration: 200,
-        }, () => {
-          self.isPush = true
-        })
+        styles: {
+          transform: 'translateX(500px)'
+        },
+        duration: 200,
+      }, () => {
+        
+      })
     },
     pushBackList() {
       var self = this
       var pushEl = self.$refs.containerDig
       animation.transition(pushEl, {
-          styles: {
-            transform: 'translateX(0)'
-          },
-          duration: 200,
-        }, () => {
-          self.isPush = false
+        styles: {
+          transform: 'translateX(0)'
+        },
+        duration: 200,
+      }, () => {
+        self.isSlide = false
       })
     }
   }
