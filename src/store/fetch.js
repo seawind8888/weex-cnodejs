@@ -1,11 +1,11 @@
 const stream = weex.requireModule('stream')
-const baseURL = 'https://cnodejs.org/api/v1/topics'
+const baseURL = 'https://cnodejs.org/api/v1'
 
-exports.fetchApi = (page, type) => {
+export function fetchApi (URL) {
     return new Promise((resolve, reject) => {
         stream.fetch({
             method: 'GET',
-            url: `${baseURL}?page=${page}&limit=20&tab=${type}&mdrender=true`,
+            url: URL,
             type: 'json'
         }, (response) => {
             if (response.status == 200) {
@@ -16,4 +16,12 @@ exports.fetchApi = (page, type) => {
             }
         }, () => {})
     })
+}
+
+export function fetchList (page, type) {
+    return fetchApi(`${baseURL}/topics?page=${page}&limit=20&tab=${type}&mdrender=true`)
+}
+
+export function fetchItem (id) {
+    return fetchApi(`${baseURL}/topic/${id}`)
 }

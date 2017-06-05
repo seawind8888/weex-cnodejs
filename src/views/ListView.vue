@@ -5,33 +5,35 @@
         <image class="slide-logo" src="http://tz88.com.cn/imgs/logo.png"></image>
       </div>
       <div class="slide-list-main">
-        <div class="slide-list-item">
+        <div @click="tabChannel('all')" class="slide-list-item">
           <text class="slide-list-info">最新</text>
         </div>
-        <div class="slide-list-item">
+        <div @click="tabChannel('job')" class="slide-list-item">
           <text class="slide-list-info">招聘</text>
         </div>
-        <div class="slide-list-item">
+        <div @click="tabChannel('ask')" class="slide-list-item">
           <text class="slide-list-info">问答</text>
         </div>
-        <div class="slide-list-item">
+        <div @click="tabChannel('good')" class="slide-list-item">
           <text class="slide-list-info">热门</text>
         </div>
       </div>
     </div>
-    <div v-else  class="slide-list-container"></div>
+    <div v-else class="slide-list-container"></div>
     <div class="list-container" ref="containerDig">
-      <CnodeHeader @pushEmit="pushList()" :titleInfo="'最新'"></CnodeHeader>
-      <list class="list" @loadmore="fetchData" loadmoreoffset="50">
-        <refresh @refresh="fetchData" :display="refreshing ? 'show' : 'hide'">
+      <CnodeHeader @pushEmit="pushList" :titleInfo="'最新'"></CnodeHeader>
+      <list class="list" @loadmore="fetchMore" loadmoreoffset="50">
+        <refresh @refresh="fetchData" :display="this.$store.state.isRefresh ? 'show' : 'hide'">
           <text class="refresh-info">正在加载 ...</text>
         </refresh>
-        <cell @click="pushList()" class="list-single-cell" v-for="item in listInfo">
-          <text class="cell-content">{{item.title}}</text>
-          <div class="cell-info-container">
-            <text class="author-info">{{item.author.loginname}}</text>
-            <div class="cell-block">
-              <text class="cell-block-info">{{ item.last_reply_at | getLastTimeStr(true) }}</text>
+        <cell  class="list-single-cell" v-for="item in this.$store.state.listInfo">
+          <div @click="gotoItem(item.id)">
+            <text class="cell-content">{{item.title}}</text>
+            <div class="cell-info-container">
+              <text class="author-info">{{item.author.loginname}}</text>
+              <div class="cell-block">
+                <text class="cell-block-info">{{ item.last_reply_at | getLastTimeStr(true) }}</text>
+              </div>
             </div>
           </div>
         </cell>
@@ -171,8 +173,7 @@ export default {
     CnodeHeader
   },
   mounted() {
-    // this.fetchData()
-    this.$store.dispatch('FETCH_LIST_DATA', this.urlParam)
+    this.fetchData()
   },
   filters: {
     getLastTimeStr(time, isFromNow) {
@@ -181,25 +182,39 @@ export default {
   },
   methods: {
     fetchData() {
-      var self = this
-      self.refreshing = true
-      return new Promise((resolve, reject) => {
-        stream.fetch({
-          method: 'GET',
-          url: 'https://cnodejs.org/api/v1/topics?page=1&limit=20&tab=job&mdrender=true',
-          type: 'json'
-        }, (response) => {
-          self.refreshing = false
-          if (response.status == 200) {
-            resolve(response)
-            self.isReady = true
-            self.listInfo = response.data.data
-          }
-          else {
-            reject(response)
-          }
-        })
-      })
+      this.$store.dispatch('FETCH_LIST_DATA', { body: this.urlParam })
+      // var self = this
+      // self.refreshing = true
+      // return new Promise((resolve, reject) => {
+      //   stream.fetch({
+      //     method: 'GET',
+      //     url: 'https://cnodejs.org/api/v1/topics?page=1&limit=20&tab=job&mdrender=true',
+      //     type: 'json'
+      //   }, (response) => {
+      //     self.refreshing = false
+      //     if (response.status == 200) {
+      //       resolve(response)
+      //       self.isReady = true
+      //       self.listInfo = response.data.data
+      //     }
+      //     else {
+      //       reject(response)
+      //     }
+      //   })
+      // })
+    },
+    fetchMore() {
+      this.urlParam.page++
+      this.$store.dispatch('FETCH_LIST_DATA', { body: this.urlParam })
+    },
+    tabChannel(type) {
+      this.urlParam.page = 1
+      this.urlParam.type = type
+      this.$store.dispatch('FETCH_LIST_DATA', { body: this.urlParam })
+      this.pushBackList()
+    },
+    gotoItem(id) {
+      this.$router.push(`/item/${id}`)
     },
     pushList() {
       var self = this
@@ -211,7 +226,7 @@ export default {
         },
         duration: 200,
       }, () => {
-        
+
       })
     },
     pushBackList() {

@@ -1,5 +1,6 @@
 import VueRouter from 'vue-router';
-import ListView from './views/cnodeListView.vue'
+import ListView from './views/ListView.vue'
+import CellItem from './views/CellItem.vue'
 
 Vue.use(VueRouter);
 
@@ -27,5 +28,8 @@ export default new VueRouter({
     }, {
         path: '/good',
         component: createListView('good')
+    }, {
+        path: '/item/:id',
+        component: CellItem
     }]
 });
