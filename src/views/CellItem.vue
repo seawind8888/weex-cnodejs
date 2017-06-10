@@ -1,25 +1,25 @@
 <template>
-  <div class="wrapper">
+  <div>
     <CnodeHeader @pushEmit="back"  :titleInfo="'详情'"></CnodeHeader>
     <scroller class="scroller" >
-      <refresh @refresh="fetchData" :display="this.$store.state.isRefresh? 'show' : 'hide'">
+      <refresh @refresh="fetchData" :display="this.$store.state.isRefresh ? 'show' : 'hide'">
         <text class="refresh-info">正在加载 ...</text>
       </refresh>
-      <div class="scroller-container" v-html="this.$store.state.itemInfo.content"></div>
+      <text class="scroller-container">
+    {{this.$store.state.itemInfo.content}}
+      </text>
     </scroller>  
   </div>
 </template>
 
 <script>
 import CnodeHeader from '../components/cnodeHeader.vue'
-export default {
-  data () {
-    return {
 
-    }
-  },
+export default {
   components: {
     CnodeHeader
+  },
+  created () {
   },
   mounted () {
     this.fetchData()
@@ -36,6 +36,9 @@ export default {
 </script>
 
 <style>
+.wrapper {
+  flex:1
+}
 .refresh-info {
   width: 750px;
   color: #dddddd;

@@ -12,8 +12,10 @@ const store = new Vuex.Store({
     mutations,
     state: {
         isRefresh: false,
+        channelName: '最新',
         listInfo: [],
-        itemInfo: ''
+        itemInfo: '',
+        itemID: '' 
     },
 })
 

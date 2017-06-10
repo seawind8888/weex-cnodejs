@@ -19,13 +19,15 @@
   "author": "",
   "license": "MIT",
   "dependencies": {
+    "fs": "0.0.1-security",
     "serve": "^5.1.5",
     "timeago.js": "^3.0.1",
     "vue": "^2.1.8",
     "vue-router": "^2.1.1",
     "vuex": "^2.1.1",
-    "vuex-router-sync": "^4.0.1",
+    "vuex-router-sync": "^4.2.0",
     "weex-html5": "^0.4.1",
+    "weex-templater": "^0.3.5",
     "weex-vue-render": "^0.11.2"
   },
   "devDependencies": {

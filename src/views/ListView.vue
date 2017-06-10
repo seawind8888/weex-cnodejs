@@ -21,18 +21,19 @@
     </div>
     <div v-else class="slide-list-container"></div>
     <div class="list-container" ref="containerDig">
-      <CnodeHeader @pushEmit="pushList" :titleInfo="'最新'"></CnodeHeader>
+      <CnodeHeader @pushEmit="pushList" :titleInfo="this.$store.state.channelName"></CnodeHeader>
       <list class="list" @loadmore="fetchMore" loadmoreoffset="50">
         <refresh @refresh="fetchData" :display="this.$store.state.isRefresh ? 'show' : 'hide'">
           <text class="refresh-info">正在加载 ...</text>
         </refresh>
-        <cell  class="list-single-cell" v-for="item in this.$store.state.listInfo">
+        <cell class="list-single-cell" v-for="item in this.$store.state.listInfo">
           <div @click="gotoItem(item.id)">
             <text class="cell-content">{{item.title}}</text>
             <div class="cell-info-container">
+              <text v-if="item.top" class="top-tag">置顶</text>
               <text class="author-info">{{item.author.loginname}}</text>
               <div class="cell-block">
-                <text class="cell-block-info">{{ item.last_reply_at | getLastTimeStr(true) }}</text>
+                <text class="cell-block-info">{{ item.last_reply_at | getLastTimeStr(item.last_reply_at) }}</text>
               </div>
             </div>
           </div>
@@ -80,12 +81,24 @@
 .cell-info-container {
   display: flex;
   flex-direction: row;
+  align-items: center;
   margin-top: 10;
   font-size: 26;
 }
 
 .author-info {
   color: rgb(156, 156, 156)
+}
+.top-tag {
+  color: #ffffff;
+  background-color: rgb(128, 196, 102);
+  padding-left: 6;
+  padding-right: 6;
+  padding-top: 4;
+  padding-bottom: 4;
+  margin-right: 6;
+  font-size: 26;
+  border-radius: 4
 }
 
 .cell-block {
@@ -154,6 +167,7 @@ import utils from '../common/utils.js'
 import CnodeHeader from '../components/cnodeHeader.vue'
 const stream = weex.requireModule('stream')
 const animation = weex.requireModule('animation')
+const Element = weex.requireModule('Element')
 export default {
   data() {
     return {
@@ -174,6 +188,7 @@ export default {
   },
   mounted() {
     this.fetchData()
+    console.log(Element)
   },
   filters: {
     getLastTimeStr(time, isFromNow) {
@@ -210,7 +225,7 @@ export default {
     tabChannel(type) {
       this.urlParam.page = 1
       this.urlParam.type = type
-      this.$store.dispatch('FETCH_LIST_DATA', { body: this.urlParam })
+      this.$store.dispatch('FETCH_TAB_DATA', { body: this.urlParam })
       this.pushBackList()
     },
     gotoItem(id) {
